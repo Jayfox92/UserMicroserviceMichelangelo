@@ -21,7 +21,7 @@ public class ThumbsUpAndDownController {
     Skicka in ett användar id.
     Returnerar ett ThumbsUpAndDown objekt.
      */
-    @PostMapping("/saveThumbs/{id}")
+    @PostMapping("/v2/saveThumbs/{id}")
     public ResponseEntity<ThumbsUpAndDown> saveThumbs(@RequestBody ThumbsUpAndDown thumbsUpAndDown, @PathVariable long id) {
         return new ResponseEntity<>(thumbsUpAndDownService.placeThumbsUpAndDown(thumbsUpAndDown, id), HttpStatus.OK); // alt CREATED
     }

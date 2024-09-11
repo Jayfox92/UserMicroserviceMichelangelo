@@ -23,7 +23,7 @@ public class ThumbsUpAndDown {
     // private double likeOrDislike = 0; // -1 equals dislike | 1 equals like
     // private String like = "upp"; // ner
     @ManyToOne
-    //@JoinColumn(name = "MediaUser_id")
+    @JoinColumn(name = "Media_User_thumbs_up_and_down")
     @JsonIgnoreProperties(value = "thumbsUpAndDown")
     private MediaUser mediaUser;
     public ThumbsUpAndDown(){}

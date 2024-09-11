@@ -13,7 +13,7 @@ public class StreamHistory {
     @Column
     private int streamHistoryCount;
     @ManyToOne
-    //@JoinColumn(name = "MediaUser_id")
+    @JoinColumn(name = "Media_User_stream_history")
     @JsonIgnoreProperties(value = "streamHistory")
     private MediaUser mediaUser;
 
