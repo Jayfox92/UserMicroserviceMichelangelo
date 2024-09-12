@@ -15,4 +15,10 @@ public class MediaUserService implements MediaUserServiceInterface {
     public MediaUser getMediaUser(long id) {
         return mediaUserRepository.findById(id).orElseThrow(()-> new ResourceNotFoundException("MediaUser","id",id));
     }
+
+    @Override
+    public MediaUser getMediaUserByUserName(String userName) {
+        return mediaUserRepository.findByUserName(userName).orElseThrow(()-> new ResourceNotFoundException("MediaUser","username",userName));
+    }
+
 }

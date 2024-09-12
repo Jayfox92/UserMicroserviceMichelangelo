@@ -15,10 +15,10 @@ public class MediaUser {
     private String userName;
     @Column(length = 50)
     private String email;
-    @OneToMany//(mappedBy = "mediaUser")
+    @OneToMany(mappedBy = "mediaUser")
     @JsonIgnoreProperties(value = "mediaUser")
     private List<StreamHistory> streamHistory;
-    @OneToMany//(mappedBy = "mediaUser")
+    @OneToMany(mappedBy = "mediaUser")
     @JsonIgnoreProperties(value = "mediaUser")
     private List<ThumbsUpAndDown> thumbsUpAndDown;
 

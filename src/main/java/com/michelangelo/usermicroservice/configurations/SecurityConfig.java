@@ -1,3 +1,4 @@
+/*
 package com.michelangelo.usermicroservice.configurations;
 
 import org.springframework.context.annotation.Bean;
@@ -18,12 +19,10 @@ public class SecurityConfig {
         http
                 .csrf((csrf->csrf.disable()))
                 .authorizeHttpRequests((authorize)->authorize
-                        /*.requestMatchers(
-                                "/api/v5/customers",
-                                "/api/v5/addfield",
-                                "/api/v5/deletefield/**",
-                                "/api/v5/updateinfo")
-                        .hasRole("ADMIN")*/
+.requestMatchers(
+                                "/v2/**")
+                        .hasRole("USER")
+
                         //.requestMatchers(//"/api/v5/availability",
                         //"/api/v5/booking",
                         //"/api/v5/mybookings",
@@ -56,3 +55,4 @@ public class SecurityConfig {
         return new InMemoryUserDetailsManager(userDetails1,userDetails2,userDetails3);
     }
 }
+*/

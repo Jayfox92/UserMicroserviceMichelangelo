@@ -19,4 +19,9 @@ public class MediaUserController {
     public MediaUser getMediaUser(@PathVariable("id") long id){
         return mediaUserService.getMediaUser(id);
     }
+
+    @GetMapping("/getuserbyusername/{username}")
+    public MediaUser getMediaUserByUserName(@PathVariable String username){
+        return mediaUserService.getMediaUserByUserName(username);
+    }
 }

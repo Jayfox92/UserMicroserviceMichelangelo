@@ -16,7 +16,7 @@ public class StreamHistoryController {
     private StreamHistoryService streamHistoryService;
 
     @PutMapping("/increment/{userId}/{mediaId}")
-    public ResponseEntity<StreamHistory> incrementStreamHistory(@PathVariable("userId") long userId, @PathVariable("mediaId") long mediaId){
+    public ResponseEntity<StreamHistory> incrementStreamHistory (@PathVariable("userId") long userId, @PathVariable("mediaId") long mediaId){
         return ResponseEntity.ok(streamHistoryService.incrementStreamHistory(userId,mediaId));
     }
 
