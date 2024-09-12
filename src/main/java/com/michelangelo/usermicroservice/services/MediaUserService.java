@@ -8,8 +8,13 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class MediaUserService implements MediaUserServiceInterface {
+
+    private final MediaUserRepository mediaUserRepository;
+
     @Autowired
-    private MediaUserRepository mediaUserRepository;
+    public MediaUserService(MediaUserRepository mediaUserRepository) {
+        this.mediaUserRepository = mediaUserRepository;
+    }
 
     @Override
     public MediaUser getMediaUser(long id) {

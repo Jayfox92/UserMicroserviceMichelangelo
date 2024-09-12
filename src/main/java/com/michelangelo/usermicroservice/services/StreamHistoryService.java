@@ -1,14 +1,10 @@
 package com.michelangelo.usermicroservice.services;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.michelangelo.usermicroservice.entities.MediaUser;
 import com.michelangelo.usermicroservice.entities.StreamHistory;
 import com.michelangelo.usermicroservice.exceptions.ResourceNotFoundException;
 import com.michelangelo.usermicroservice.repositories.MediaUserRepository;
 import com.michelangelo.usermicroservice.repositories.StreamHistoryRepository;
-import jakarta.persistence.Column;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,10 +13,15 @@ import java.util.Optional;
 
 @Service
 public class StreamHistoryService implements StreamHistoryServiceInterface{
+
+    private final StreamHistoryRepository streamHistoryRepository;
+    private final MediaUserRepository mediaUserRepository;
+
     @Autowired
-    private StreamHistoryRepository streamHistoryRepository;
-    @Autowired
-    MediaUserRepository mediaUserRepository;
+    public StreamHistoryService(StreamHistoryRepository streamHistoryRepository, MediaUserRepository mediaUserRepository) {
+        this.streamHistoryRepository = streamHistoryRepository;
+        this.mediaUserRepository = mediaUserRepository;
+    }
 
 
     @Override
