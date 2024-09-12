@@ -18,7 +18,7 @@ public class MediaUser {
     @OneToMany//(mappedBy = "mediaUser")
     @JsonIgnoreProperties(value = "mediaUser")
     private List<StreamHistory> streamHistory;
-    @OneToMany//(mappedBy = "mediaUser")
+    @OneToMany(mappedBy = "mediaUser", cascade = CascadeType.ALL)
     @JsonIgnoreProperties(value = "mediaUser")
     private List<ThumbsUpAndDown> thumbsUpAndDown;
 
