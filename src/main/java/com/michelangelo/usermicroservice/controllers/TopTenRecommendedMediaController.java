@@ -6,11 +6,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
 @RestController
+@RequestMapping("/v2/user")
 public class TopTenRecommendedMediaController {
     TopTenRecommendedMediaServiceInterface topTenRecommendedMediaService;
 
@@ -19,7 +21,7 @@ public class TopTenRecommendedMediaController {
         this.topTenRecommendedMediaService = topTenRecommendedMediaService;
     }
 
-    @GetMapping("gettoptenrecommendedmedia/{id}")
+    @GetMapping("/gettoptenrecommendedmedia/{id}")
     public ResponseEntity<List<MediaVO>> getTopTenRecommendedMedia(@PathVariable long id){
         return ResponseEntity.ok(topTenRecommendedMediaService.getTopTenRecommendedMedia(id));
     }

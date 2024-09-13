@@ -8,6 +8,12 @@ public class GenreVO {
     public GenreVO() {
     }
 
+    public GenreVO(Long id, String name, int count) {
+        this.id = id;
+        this.name = name;
+        this.count = count;
+    }
+
     public int getCount() {
         return count;
     }
