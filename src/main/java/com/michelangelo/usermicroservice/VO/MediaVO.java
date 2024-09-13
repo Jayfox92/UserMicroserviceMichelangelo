@@ -12,6 +12,14 @@ public class MediaVO {
     public MediaVO() {
     }
 
+    public MediaVO(Long id, String title, LocalDate releaseDate, List<GenreVO> genres) {
+        this.id = id;
+        this.title = title;
+        this.releaseDate = releaseDate;
+        this.genres = genres;
+    }
+
+
     public List<GenreVO> getGenres() {
         return genres;
     }

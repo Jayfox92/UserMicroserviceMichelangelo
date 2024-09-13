@@ -19,6 +19,12 @@ public class StreamHistory {
 
     public StreamHistory(){}
 
+    public StreamHistory(long id, int mediaId, int streamHistoryCount) {
+        this.id = id;
+        this.mediaId = mediaId;
+        this.streamHistoryCount = streamHistoryCount;
+    }
+
     public long getId() {
         return id;
     }
