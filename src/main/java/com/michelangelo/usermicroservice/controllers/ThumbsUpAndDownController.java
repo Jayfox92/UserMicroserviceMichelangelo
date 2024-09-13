@@ -14,24 +14,11 @@ public class ThumbsUpAndDownController {
     @Autowired
     private ThumbsUpAndDownService thumbsUpAndDownService;
 
-    // endpoint för att spara ner tumme upp & tumme ner för media
-    /*
-    Endpoint för att spara ner tumme upp & tumme ner för ett media objekt.
-    Inkluderar ett media id.
-    Skicka in ett användar id.
-    Returnerar ett ThumbsUpAndDown objekt.
-     */
-    @PostMapping("/saveThumbs/{id}")
-    public ResponseEntity<ThumbsUpAndDown> saveThumbs(@RequestBody ThumbsUpAndDown thumbsUpAndDown, @PathVariable long id) {
-        return new ResponseEntity<>(thumbsUpAndDownService.placeThumbsUpAndDown(thumbsUpAndDown, id), HttpStatus.OK); // alt CREATED
+    // Endpoint för att spara ner tumme upp & tumme ner för vald media
+    @PostMapping("/saveThumbs")
+    public ResponseEntity<ThumbsUpAndDown> saveThumbs(@RequestBody ThumbsUpAndDown thumbsUpAndDown) {
+        return new ResponseEntity<>(thumbsUpAndDownService.placeThumbsUpAndDown(thumbsUpAndDown), HttpStatus.OK);
     }
-
-    /*
-    dela upp i ta bort, uppdatera, spara
-    eller ha en endpoint som kontrollerar om det finns en tumme upp/ner redan
-    för vald media
-    ????
-     */
 
 
 }
