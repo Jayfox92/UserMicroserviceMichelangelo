@@ -55,22 +55,25 @@ public class TopTenRecommendedMediaService implements TopTenRecommendedMediaServ
         return unlistenedMedia;
     }
 
-    private List<GenreVO> getTopThreeMostPlayedGenresFromMediaHistory(List<StreamHistory> streamHistory) {
+    //private List<GenreVO> getTopThreeMostPlayedGenresFromMediaHistory(List<StreamHistory> streamHistories){
+    public List<GenreVO> getTopThreeMostPlayedGenresFromMediaHistory(List<StreamHistory> streamHistories){
         List<GenreVO> genres = new ArrayList<>();
         boolean genreAdded;
-        for (StreamHistory stream : streamHistory) {
+        for (StreamHistory stream: streamHistories) {
             MediaVO mediaVO = restTemplate.getForObject("http://MEDIAMICROSERVICE/media/" + stream.getMediaId(), MediaVO.class);
-            for (GenreVO genreVO : mediaVO.getGenres()) {
-                genreAdded = false;
-                for (GenreVO genre : genres) {
-                    if (genre.getId().equals(genreVO.getId())) {
-                        genre.setCount(genre.getCount() + stream.getStreamHistoryCount());
-                        genreAdded = true;
+            if (mediaVO != null) {
+                for (GenreVO genreVO : mediaVO.getGenres()) {
+                    genreAdded = false;
+                    for (GenreVO genre : genres) {
+                        if (genre.getId().equals(genreVO.getId())) {
+                            genre.setCount(genre.getCount() + stream.getStreamHistoryCount());
+                            genreAdded = true;
+                        }
                     }
-                }
-                if (!genreAdded) {
-                    genres.add(genreVO);
-                    genres.get(genres.size() - 1).setCount(stream.getStreamHistoryCount());
+                    if (!genreAdded) {
+                        genres.add(genreVO);
+                        genres.getLast().setCount(stream.getStreamHistoryCount());
+                    }
                 }
             }
         }
