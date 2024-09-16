@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/v2/user")
+@RequestMapping("/user/mediauser")
 public class MediaUserController {
     @Autowired
     private MediaUserService mediaUserService;

@@ -112,7 +112,7 @@ public class TopTenRecommendedMediaService implements TopTenRecommendedMediaServ
                 .collect(Collectors.toList());
 
         List<MediaVO> unlistenedMedia = new ArrayList<>();
-        GenreVO[] allGenres = restTemplate.getForObject("http://MEDIAMICROSERVICE/genres", GenreVO[].class);
+        GenreVO[] allGenres = restTemplate.getForObject("http://MEDIAMICROSERVICE/media/genres", GenreVO[].class);
 
         if (allGenres != null) {
             List<GenreVO> otherGenres = Arrays.stream(allGenres)

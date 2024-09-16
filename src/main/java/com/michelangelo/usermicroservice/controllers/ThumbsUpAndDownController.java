@@ -8,14 +8,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/user/thumbs")
 public class ThumbsUpAndDownController {
 
     @Autowired
     private ThumbsUpAndDownService thumbsUpAndDownService;
 
     // Endpoint för att spara ner tumme upp & tumme ner för vald media
-    @PostMapping("/saveThumbs")
+    @PostMapping("/savethumbs")
     public ResponseEntity<ThumbsUpAndDown> saveThumbs(@RequestBody ThumbsUpAndDown thumbsUpAndDown) {
         return new ResponseEntity<>(thumbsUpAndDownService.placeThumbsUpAndDown(thumbsUpAndDown), HttpStatus.OK);
     }
