@@ -8,15 +8,27 @@ public class MediaVO {
     private String title;
     private LocalDate releaseDate;
     private List<GenreVO> genres;
+    private List<ArtistVO> artists;
 
     public MediaVO() {
     }
 
+    public MediaVO(Long id, String title, LocalDate releaseDate, List<GenreVO> genres, List<ArtistVO> artists) {
+        this.id = id;
+        this.title = title;
+        this.releaseDate = releaseDate;
+        this.genres = genres;
+        this.artists = artists;
+    }
     public MediaVO(Long id, String title, LocalDate releaseDate, List<GenreVO> genres) {
         this.id = id;
         this.title = title;
         this.releaseDate = releaseDate;
         this.genres = genres;
+    }
+    public MediaVO(Long id, String title){
+        this.id = id;
+        this.title = title;
     }
 
 
@@ -50,5 +62,13 @@ public class MediaVO {
 
     public void setReleaseDate(LocalDate releaseDate) {
         this.releaseDate = releaseDate;
+    }
+
+    public List<ArtistVO> getArtists() {
+        return artists;
+    }
+
+    public void setArtists(List<ArtistVO> artists) {
+        this.artists = artists;
     }
 }
