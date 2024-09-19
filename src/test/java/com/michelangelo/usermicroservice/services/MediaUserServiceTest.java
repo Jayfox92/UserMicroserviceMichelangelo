@@ -114,18 +114,4 @@ class MediaUserServiceTest {
         verify(restTemplateMock, times(3)).getForObject(anyString(), eq(MediaVO.class));
     }
 
-    /*@Override
-    public List<MediaWithStreamCountVO> getTopPlayedMedia(long userId) {
-        List<MediaWithStreamCountVO> resultList = new ArrayList<>();
-        MediaUser mediaUser = mediaUserRepository.findById(userId).orElseThrow(()->new ResourceNotFoundException("MediaUser", "id",userId));
-        List<StreamHistory> streamHistory = mediaUser.getStreamHistory();
-        if (streamHistory.isEmpty()) return resultList;
-        streamHistory.sort(Comparator.comparingInt(StreamHistory::getStreamHistoryCount).reversed());
-        for(int i=0; i < streamHistory.size()||i < 5; i++){
-            MediaVO mediaVO = restTemplate.getForObject("http://MEDIAMICROSERVICE/media/media/" + streamHistory.get(i).getMediaId(), MediaVO.class);
-            resultList.add(new MediaWithStreamCountVO(mediaVO,streamHistory.get(i).getStreamHistoryCount()));
-        }
-
-        return resultList;
-    }*/
 }
