@@ -10,6 +10,9 @@ import com.michelangelo.usermicroservice.repositories.MediaUserRepository;
 import com.michelangelo.usermicroservice.repositories.StreamHistoryRepository;
 import com.michelangelo.usermicroservice.repositories.ThumbsUpAndDownRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -83,7 +86,9 @@ public class TopTenRecommendedMediaService implements TopTenRecommendedMediaServ
         }
 
         if(numberOfMediasToFind > 0){
+            List<MediaVO> allMedia = this.getAllMedia();
             // Get all medias JOHANN, DET ÄR DETTA ENDPOINT SOM FATTAS!!
+
             // Remove all media with thummbs down
             // Choose missing media from the rest
             // Add them to topTenRecommended media
@@ -201,6 +206,17 @@ public class TopTenRecommendedMediaService implements TopTenRecommendedMediaServ
             }
         }
         return unlistenedMedia;
+    }
+
+    public List<MediaVO> getAllMedia(){
+        ResponseEntity<List<MediaVO>> responseEntity = restTemplate.exchange(
+                "http://MEDIAMICROSERVICE/media/media/getall",
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<List<MediaVO>>() {}
+        );
+        return responseEntity.getBody();
+
     }
 
 /*
