@@ -84,9 +84,13 @@ public class TopTenRecommendedMediaService implements TopTenRecommendedMediaServ
 
         if(numberOfMediasToFind > 0){
             // Get all medias JOHANN, DET ÄR DETTA ENDPOINT SOM FATTAS!!
+            List<MediaVO> listOfMedia = getListOfAllMedia();
             // Remove all media with thummbs down
+            listOfMedia = removeMediaWithThumbDown(mediaUser, listOfMedia);
             // Choose missing media from the rest
+            listOfMedia = getRandomListOfMedia(listOfMedia, numberOfMediasToFind);
             // Add them to topTenRecommended media
+            topTenRecommendedMedia.addAll(listOfMedia);
         }
 
         return topTenRecommendedMedia;
@@ -112,20 +116,12 @@ public class TopTenRecommendedMediaService implements TopTenRecommendedMediaServ
 */
     }
 
-    private List<MediaVO> removeMediaWithThumbDown(MediaUser mediaUser, List<MediaVO> medias) {
-        List<ThumbsUpAndDown> listOfMediaWithThumbDown = thumbsUpAndDownRepository.findAllByMediaUserAndThumbsDown(mediaUser, true);
-        List<Long> listOfMediaIdWithThumbDown = listOfMediaWithThumbDown.stream().map(ThumbsUpAndDown::getMediaId).toList();
-        return medias.stream()
-                .filter(mediaVO -> !listOfMediaIdWithThumbDown.contains(mediaVO.getId()))
-                .toList();
-    }
-
     //private List<GenreVO> getTopThreeMostPlayedGenresFromMediaHistory(List<StreamHistory> streamHistories){
     public List<Long> getTopThreeMostPlayedGenresFromMediaHistory(List<StreamHistory> streamHistories){
         List<GenreVO> genres = new ArrayList<>();
         boolean genreAdded;
         for (StreamHistory stream: streamHistories) {
-            MediaVO mediaVO = restTemplate.getForObject("http://MEDIAMICROSERVICE/media/" + stream.getMediaId(), MediaVO.class);
+            MediaVO mediaVO = restTemplate.getForObject("http://MEDIAMICROSERVICE/media/media/" + stream.getMediaId(), MediaVO.class);
             if (mediaVO != null) {
                 for (GenreVO genreVO : mediaVO.getGenres()) {
                     genreAdded = false;
@@ -201,6 +197,41 @@ public class TopTenRecommendedMediaService implements TopTenRecommendedMediaServ
             }
         }
         return unlistenedMedia;
+    }
+
+    private List<MediaVO> removeMediaWithThumbDown(MediaUser mediaUser, List<MediaVO> medias) {
+        List<ThumbsUpAndDown> listOfMediaWithThumbDown = thumbsUpAndDownRepository.findAllByMediaUserAndThumbsDown(mediaUser, true);
+        List<Long> listOfMediaIdWithThumbDown = listOfMediaWithThumbDown.stream().map(ThumbsUpAndDown::getMediaId).toList();
+        return medias.stream()
+                .filter(mediaVO -> !listOfMediaIdWithThumbDown.contains(mediaVO.getId()))
+                .toList();
+    }
+
+    // Metod för att hitta media som användaren inte har lyssnat på baserat på genrer
+    public List<MediaVO> getListOfAllMedia() {
+        MediaVO[] listOfAllMedia = restTemplate.getForObject(
+                "http://MEDIAMICROSERVICE/media/media/getall", MediaVO[].class);
+        return new ArrayList<MediaVO>(Arrays.asList(listOfAllMedia));
+    }
+        // Metod för att hitta media som användaren inte har lyssnat på baserat på genrer
+    public List<MediaVO> getRandomListOfMedia(List<MediaVO> listOfMedia, int numberOfMediaToFind) {
+        List<MediaVO> listOfRandomMedia = new ArrayList<>();
+
+        if (listOfMedia != null) {
+            if(listOfMedia.size() <= numberOfMediaToFind) {
+                listOfRandomMedia.addAll(listOfMedia);
+            }
+            else{
+                Random random = new Random();
+                int index = 0;
+                while(listOfRandomMedia.size() < numberOfMediaToFind){
+                    index = random.nextInt(listOfMedia.size());
+                    if(!listOfRandomMedia.contains(listOfMedia.get(index)))
+                        listOfRandomMedia.add(listOfMedia.get(index));
+                }
+            }
+        }
+        return listOfRandomMedia;
     }
 
 /*
