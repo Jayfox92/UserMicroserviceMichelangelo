@@ -1,5 +1,6 @@
 package com.michelangelo.usermicroservice.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
@@ -24,7 +25,8 @@ public class ThumbsUpAndDown {
     // private String like = "upp"; // ner
     @ManyToOne
     @JoinColumn(name = "media_user_id")
-    @JsonIgnoreProperties(value = "thumbsUpAndDown")
+    @JsonIgnoreProperties({"thumbsUpAndDown", "streamHistory"})
+
     private MediaUser mediaUser;
     public ThumbsUpAndDown(){}
 
