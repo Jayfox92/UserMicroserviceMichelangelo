@@ -86,7 +86,7 @@ public class TopTenRecommendedMediaService implements TopTenRecommendedMediaServ
         }
 
         if(numberOfMediasToFind > 0){
-            List<MediaVO> allMedia = this.getAllMedia();
+//            List<MediaVO> allMedia = this.getAllMedia();
             // Get all medias JOHANN, DET ÄR DETTA ENDPOINT SOM FATTAS!!
             List<MediaVO> listOfMedia = getListOfAllMedia();
             // Remove all media with thummbs down
@@ -203,6 +203,7 @@ public class TopTenRecommendedMediaService implements TopTenRecommendedMediaServ
         return unlistenedMedia;
     }
 
+/*
     public List<MediaVO> getAllMedia(){
         ResponseEntity<List<MediaVO>> responseEntity = restTemplate.exchange(
                 "http://MEDIAMICROSERVICE/media/media/getall",
@@ -213,6 +214,7 @@ public class TopTenRecommendedMediaService implements TopTenRecommendedMediaServ
         return responseEntity.getBody();
 
     }
+*/
 
     private List<MediaVO> removeMediaWithThumbDown(MediaUser mediaUser, List<MediaVO> medias) {
         List<ThumbsUpAndDown> listOfMediaWithThumbDown = thumbsUpAndDownRepository.findAllByMediaUserAndThumbsDown(mediaUser, true);
