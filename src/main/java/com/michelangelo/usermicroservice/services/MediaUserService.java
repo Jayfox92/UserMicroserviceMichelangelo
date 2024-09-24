@@ -43,6 +43,11 @@ public class MediaUserService implements MediaUserServiceInterface {
 
     @Override
     public List<MediaWithStreamCountVO> getTopPlayedMedia(long userId, int limit) {
+        // Kontrollera om limit är större än maxLimit
+        if (limit > maxLimit) {
+            throw new IllegalArgumentException("Limit exceeds maximum allowed value of " + maxLimit);
+        }
+
         List<MediaWithStreamCountVO> resultList = new ArrayList<>();
 
         MediaUser mediaUser = mediaUserRepository.findById(userId).orElseThrow(()->new ResourceNotFoundException("MediaUser", "id",userId));

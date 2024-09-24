@@ -33,6 +33,10 @@ public class MediaUserController {
 
         return ResponseEntity.ok(mediaUserService.getTopPlayedMedia(userId, limit));
     }
-
+    // Undantagshanterare för IllegalArgumentException
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<String> handleIllegalArgument(IllegalArgumentException ex) {
+        return ResponseEntity.badRequest().body(ex.getMessage());
+    }
 
 }
