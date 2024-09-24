@@ -8,10 +8,7 @@ import com.michelangelo.usermicroservice.services.MediaUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -32,9 +29,9 @@ public class MediaUserController {
     }
 
     @GetMapping("/gettopplayedmedia/{userId}")
-    public ResponseEntity<List<MediaWithStreamCountVO>> getTopplayedMediaByUserId(@PathVariable long userId){
+    public ResponseEntity<List<MediaWithStreamCountVO>> getTopplayedMediaByUserId(@PathVariable long userId, @RequestParam(defaultValue = "5") int limit) {  // Standardvärde 5 om inget anges){
 
-        return ResponseEntity.ok(mediaUserService.getTopPlayedMedia(userId));
+        return ResponseEntity.ok(mediaUserService.getTopPlayedMedia(userId, limit));
     }
 
 
