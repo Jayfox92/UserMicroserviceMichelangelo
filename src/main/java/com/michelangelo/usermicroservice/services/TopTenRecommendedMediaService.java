@@ -71,6 +71,7 @@ public class TopTenRecommendedMediaService implements TopTenRecommendedMediaServ
             }
         }
 
+
         if (unlistenedMediaFromOtherGenres.size() <= 2) {
             numberOfMediasToFind = numberOfMediasToFind + 2 - unlistenedMediaFromOtherGenres.size();
             topTenRecommendedMedia.addAll(unlistenedMediaFromOtherGenres);
@@ -78,7 +79,8 @@ public class TopTenRecommendedMediaService implements TopTenRecommendedMediaServ
         else{
             Random random = new Random();
             int index = 0;
-            while(topTenRecommendedMedia.size() < 10){
+            int amountToAdd = topTenRecommendedMedia.size()+2;
+            while(topTenRecommendedMedia.size() < amountToAdd){
                 index = random.nextInt(unlistenedMediaFromOtherGenres.size());
                 if(!topTenRecommendedMedia.contains(unlistenedMediaFromOtherGenres.get(index)))
                     topTenRecommendedMedia.add(unlistenedMediaFromOtherGenres.get(index));
@@ -159,7 +161,7 @@ public class TopTenRecommendedMediaService implements TopTenRecommendedMediaServ
         List<MediaVO> unlistenedMedia = new ArrayList<>();
         for (Long genreId : genreIds) {
             MediaVO[] mediaFromGenre = restTemplate.getForObject(
-                    "http://MEDIAMICROSERVICE/media/genre/" + genreId, MediaVO[].class);
+                    "http://MEDIAMICROSERVICE/media/media/genre/" + genreId, MediaVO[].class);
 
             if (mediaFromGenre != null) {
                 for (MediaVO media : mediaFromGenre) {
@@ -180,7 +182,7 @@ public class TopTenRecommendedMediaService implements TopTenRecommendedMediaServ
                 .toList();
 
         List<MediaVO> unlistenedMedia = new ArrayList<>();
-        GenreVO[] allGenres = restTemplate.getForObject("http://MEDIAMICROSERVICE/media/genres", GenreVO[].class);
+        GenreVO[] allGenres = restTemplate.getForObject("http://MEDIAMICROSERVICE/media/genre/getall", GenreVO[].class);
 
         if (allGenres != null) {
             List<GenreVO> otherGenres = Arrays.stream(allGenres)
@@ -189,7 +191,7 @@ public class TopTenRecommendedMediaService implements TopTenRecommendedMediaServ
 
             for (GenreVO genreVO : otherGenres) {
                 MediaVO[] mediaFromGenre = restTemplate.getForObject(
-                        "http://MEDIAMICROSERVICE/media/genre/" + genreVO.getId(), MediaVO[].class);
+                        "http://MEDIAMICROSERVICE/media/media/genre/" + genreVO.getId(), MediaVO[].class);
 
                 if (mediaFromGenre != null) {
                     for (MediaVO media : mediaFromGenre) {
