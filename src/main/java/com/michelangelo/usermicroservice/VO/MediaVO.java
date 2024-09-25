@@ -9,6 +9,7 @@ public class MediaVO {
     private LocalDate releaseDate;
     private List<GenreVO> genres;
     private List<ArtistVO> artists;
+    private TypeOfMediaVO typeOfMedia;
 
     public MediaVO() {
     }

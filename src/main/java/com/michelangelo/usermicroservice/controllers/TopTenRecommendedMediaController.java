@@ -21,8 +21,8 @@ public class TopTenRecommendedMediaController {
         this.topTenRecommendedMediaService = topTenRecommendedMediaService;
     }
 
-    @GetMapping("/gettoptenrecommendedmedia/{id}")
-    public ResponseEntity<List<MediaVO>> getTopTenRecommendedMedia(@PathVariable long id){
-        return ResponseEntity.ok(topTenRecommendedMediaService.getTopTenRecommendedMedia(id));
+    @GetMapping("/gettoptenrecommendedmedia/{userId}/{mediaType}")
+    public ResponseEntity<List<MediaVO>> getTopTenRecommendedMedia(@PathVariable long userId, @PathVariable String mediaType){
+        return ResponseEntity.ok(topTenRecommendedMediaService.getTopTenRecommendedMedia(userId,mediaType));
     }
 }
