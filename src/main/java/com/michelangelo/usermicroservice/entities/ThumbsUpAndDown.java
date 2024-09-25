@@ -10,7 +10,7 @@ public class ThumbsUpAndDown {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     @Column
-    private int mediaId;
+    private long mediaId;
     @Column
     private boolean thumbsUp;
     //false innebär att användaren ej gjort ett val (tumme upp eller tumme ner på ett media)
@@ -38,11 +38,11 @@ public class ThumbsUpAndDown {
         this.id = id;
     }
 
-    public int getMediaId() {
+    public long getMediaId() {
         return mediaId;
     }
 
-    public void setMediaId(int mediaId) {
+    public void setMediaId(long mediaId) {
         this.mediaId = mediaId;
     }
 

@@ -9,7 +9,7 @@ public class StreamHistory {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     @Column
-    private int mediaId;
+    private long mediaId;
     @Column
     private int streamHistoryCount;
     @ManyToOne
@@ -33,11 +33,11 @@ public class StreamHistory {
         this.id = id;
     }
 
-    public int getMediaId() {
+    public long getMediaId() {
         return mediaId;
     }
 
-    public void setMediaId(int mediaId) {
+    public void setMediaId(long mediaId) {
         this.mediaId = mediaId;
     }
 
