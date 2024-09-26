@@ -1,8 +1,11 @@
 package com.michelangelo.usermicroservice.VO;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 public class GenreVO {
     private Long id;
     private String name;
+    @JsonIgnore
     private int count;
 
     public GenreVO() {

@@ -10,9 +10,6 @@ import com.michelangelo.usermicroservice.repositories.MediaUserRepository;
 import com.michelangelo.usermicroservice.repositories.StreamHistoryRepository;
 import com.michelangelo.usermicroservice.repositories.ThumbsUpAndDownRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -101,25 +98,6 @@ public class TopTenRecommendedMediaService implements TopTenRecommendedMediaServ
 
         return topTenRecommendedMedia;
 
-/*
-        // Omvandla genre-IDs till Integer för att matcha metoden
-        List<Integer> genreIds = topGenres.stream()
-                .map(genreVO -> genreVO.getId().intValue()) // Konvertera Long till Integer
-                .collect(Collectors.toList());
-
-        List<MediaVO> unlistenedMedia = findUnlistenedMediaByGenres(userId, genreIds).stream()
-                .limit(8)  // Begränsa till 8 media från topp 3 genrer
-                .collect(Collectors.toList());
-
-        // Hämta 2 media från andra genrer
-        List<MediaVO> otherGenreMedia = findUnlistenedMediaFromOtherGenres(userId, genreIds).stream()
-                .limit(2)  // Begränsa till 2 media från andra genrer
-                .collect(Collectors.toList());
-
-        // Slå samman resultaten och returnera topp 10
-        unlistenedMedia.addAll(otherGenreMedia);
-        return unlistenedMedia;
-*/
     }
 
     //private List<GenreVO> getTopThreeMostPlayedGenresFromMediaHistory(List<StreamHistory> streamHistories){
@@ -205,19 +183,6 @@ public class TopTenRecommendedMediaService implements TopTenRecommendedMediaServ
         return unlistenedMedia;
     }
 
-/*
-    public List<MediaVO> getAllMedia(){
-        ResponseEntity<List<MediaVO>> responseEntity = restTemplate.exchange(
-                "http://MEDIAMICROSERVICE/media/media/getall",
-                HttpMethod.GET,
-                null,
-                new ParameterizedTypeReference<List<MediaVO>>() {}
-        );
-        return responseEntity.getBody();
-
-    }
-*/
-
     private List<MediaVO> removeMediaWithThumbDown(MediaUser mediaUser, List<MediaVO> medias) {
         List<ThumbsUpAndDown> listOfMediaWithThumbDown = thumbsUpAndDownRepository.findAllByMediaUserAndThumbsDown(mediaUser, true);
         List<Long> listOfMediaIdWithThumbDown = listOfMediaWithThumbDown.stream().map(ThumbsUpAndDown::getMediaId).toList();
@@ -252,59 +217,4 @@ public class TopTenRecommendedMediaService implements TopTenRecommendedMediaServ
         }
         return listOfRandomMedia;
     }
-
-/*
-    // Metod för att hitta media som användaren inte har lyssnat på baserat på genrer
-    public List<MediaVO> findUnlistenedMediaByGenres(Long userId, List<Integer> genreIds) {
-        List<StreamHistory> userStreamHistory = streamHistoryRepository.findByMediaUser_Id(userId);
-        List<Integer> listenedMediaIds = userStreamHistory.stream()
-                .map(StreamHistory::getMediaId)
-                .collect(Collectors.toList());
-
-        List<MediaVO> unlistenedMedia = new ArrayList<>();
-        for (Integer genreId : genreIds) {
-            MediaVO[] mediaFromGenre = restTemplate.getForObject(
-                    "http://MEDIAMICROSERVICE/media/genre/" + genreId, MediaVO[].class);
-
-            if (mediaFromGenre != null) {
-                for (MediaVO media : mediaFromGenre) {
-                    if (!listenedMediaIds.contains(media.getId())) {
-                        unlistenedMedia.add(media);
-                    }
-                }
-            }
-        }
-        return unlistenedMedia;
-    }
-    // Metod för att hämta media från andra genrer (genrer som inte är bland användarens topp 3)
-    public List<MediaVO> findUnlistenedMediaFromOtherGenres(Long userId, List<Integer> excludeGenreIds) {
-        List<StreamHistory> userStreamHistory = streamHistoryRepository.findByMediaUser_Id(userId);
-        List<Integer> listenedMediaIds = userStreamHistory.stream()
-                .map(StreamHistory::getMediaId)
-                .collect(Collectors.toList());
-
-        List<MediaVO> unlistenedMedia = new ArrayList<>();
-        GenreVO[] allGenres = restTemplate.getForObject("http://MEDIAMICROSERVICE/media/genres", GenreVO[].class);
-
-        if (allGenres != null) {
-            List<GenreVO> otherGenres = Arrays.stream(allGenres)
-                    .filter(genreVO -> !excludeGenreIds.contains(genreVO.getId().intValue()))
-                    .collect(Collectors.toList());
-
-            for (GenreVO genreVO : otherGenres) {
-                MediaVO[] mediaFromGenre = restTemplate.getForObject(
-                        "http://MEDIAMICROSERVICE/media/genre/" + genreVO.getId(), MediaVO[].class);
-
-                if (mediaFromGenre != null) {
-                    for (MediaVO media : mediaFromGenre) {
-                        if (!listenedMediaIds.contains(media.getId())) {
-                            unlistenedMedia.add(media);
-                        }
-                    }
-                }
-            }
-        }
-        return unlistenedMedia;
-    }
-*/
 }
