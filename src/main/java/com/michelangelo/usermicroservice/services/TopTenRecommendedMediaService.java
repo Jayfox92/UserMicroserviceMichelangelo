@@ -38,15 +38,15 @@ public class TopTenRecommendedMediaService implements TopTenRecommendedMediaServ
     }
 
     @Override
-    public List<MediaVO> getTopTenRecommendedMedia(Long userId) {
+    public List<MediaVO> getTopTenRecommendedMedia(Long userId, String mediaType) {
         MediaUser mediaUser = mediaUserRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("MediaUser", "id", userId));
         List<Long> topGenres = getTopThreeMostPlayedGenresFromMediaHistory(mediaUser.getStreamHistory());
 
         // Hämta all media från top genrer
-        List<MediaVO> unlistenedMediaFromTopGenres = findUnlistenedMediaFromTopGenres(userId, topGenres);
+        List<MediaVO> unlistenedMediaFromTopGenres = findUnlistenedMediaFromTopGenres(userId, topGenres, mediaType);
 
         // Hämta all media från andra genrer
-        List<MediaVO> unlistenedMediaFromOtherGenres = findUnlistenedMediaFromOtherGenres(userId, topGenres);
+        List<MediaVO> unlistenedMediaFromOtherGenres = findUnlistenedMediaFromOtherGenres(userId, topGenres,mediaType);
 
         // Ta bort all hittat media med tumma ner
         unlistenedMediaFromTopGenres = removeMediaWithThumbDown(mediaUser, unlistenedMediaFromTopGenres);
@@ -90,7 +90,7 @@ public class TopTenRecommendedMediaService implements TopTenRecommendedMediaServ
         if(numberOfMediasToFind > 0){
 //            List<MediaVO> allMedia = this.getAllMedia();
             // Get all medias JOHANN, DET ÄR DETTA ENDPOINT SOM FATTAS!!
-            List<MediaVO> listOfMedia = getListOfAllMedia();
+            List<MediaVO> listOfMedia = getListOfAllMedia(mediaType);
             // Remove all media with thummbs down
             listOfMedia = removeMediaWithThumbDown(mediaUser, listOfMedia);
             // Choose missing media from the rest
@@ -152,7 +152,7 @@ public class TopTenRecommendedMediaService implements TopTenRecommendedMediaServ
     }
 
     // Metod för att hitta media som användaren inte har lyssnat på baserat på genrer
-    public List<MediaVO> findUnlistenedMediaFromTopGenres(Long userId, List<Long> genreIds) {
+    public List<MediaVO> findUnlistenedMediaFromTopGenres(Long userId, List<Long> genreIds,String mediaType) {
         List<StreamHistory> userStreamHistory = streamHistoryRepository.findByMediaUser_Id(userId);
         List<Long> listenedMediaIds = userStreamHistory.stream()
                 .map(StreamHistory::getMediaId)
@@ -161,7 +161,7 @@ public class TopTenRecommendedMediaService implements TopTenRecommendedMediaServ
         List<MediaVO> unlistenedMedia = new ArrayList<>();
         for (Long genreId : genreIds) {
             MediaVO[] mediaFromGenre = restTemplate.getForObject(
-                    "http://MEDIAMICROSERVICE/media/media/genre/" + genreId, MediaVO[].class);
+                    "http://MEDIAMICROSERVICE/media/media/genre/" + genreId + "/" + mediaType, MediaVO[].class);
 
             if (mediaFromGenre != null) {
                 for (MediaVO media : mediaFromGenre) {
@@ -175,7 +175,7 @@ public class TopTenRecommendedMediaService implements TopTenRecommendedMediaServ
     }
 
     // Metod för att hämta media från andra genrer (genrer som inte är bland användarens topp 3)
-    public List<MediaVO> findUnlistenedMediaFromOtherGenres(Long userId, List<Long> excludeGenreIds) {
+    public List<MediaVO> findUnlistenedMediaFromOtherGenres(Long userId, List<Long> excludeGenreIds,String mediaType) {
         List<StreamHistory> userStreamHistory = streamHistoryRepository.findByMediaUser_Id(userId);
         List<Long> listenedMediaIds = userStreamHistory.stream()
                 .map(StreamHistory::getMediaId)
@@ -191,7 +191,7 @@ public class TopTenRecommendedMediaService implements TopTenRecommendedMediaServ
 
             for (GenreVO genreVO : otherGenres) {
                 MediaVO[] mediaFromGenre = restTemplate.getForObject(
-                        "http://MEDIAMICROSERVICE/media/media/genre/" + genreVO.getId(), MediaVO[].class);
+                        "http://MEDIAMICROSERVICE/media/media/genre/" + genreVO.getId() + "/" + mediaType, MediaVO[].class);
 
                 if (mediaFromGenre != null) {
                     for (MediaVO media : mediaFromGenre) {
@@ -227,9 +227,9 @@ public class TopTenRecommendedMediaService implements TopTenRecommendedMediaServ
     }
 
     // Metod för att hitta media som användaren inte har lyssnat på baserat på genrer
-    public List<MediaVO> getListOfAllMedia() {
+    public List<MediaVO> getListOfAllMedia(String mediaType) {
         MediaVO[] listOfAllMedia = restTemplate.getForObject(
-                "http://MEDIAMICROSERVICE/media/media/getall", MediaVO[].class);
+                "http://MEDIAMICROSERVICE/media/media/getallbymediatype/"+mediaType, MediaVO[].class);
         return new ArrayList<MediaVO>(Arrays.asList(listOfAllMedia));
     }
         // Metod för att hitta media som användaren inte har lyssnat på baserat på genrer
