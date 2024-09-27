@@ -1,7 +1,6 @@
 package com.michelangelo.usermicroservice.repositories;
 
 import com.michelangelo.usermicroservice.entities.MediaUser;
-import com.michelangelo.usermicroservice.entities.StreamHistory;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

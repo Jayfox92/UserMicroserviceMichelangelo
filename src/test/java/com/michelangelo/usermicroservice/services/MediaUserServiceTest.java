@@ -74,6 +74,26 @@ class MediaUserServiceTest {
 
     // Test för getTopPlayedMedia
     @Test
+    void shouldReturnListWhenSucceeded(){
+        StreamHistory streamHistory = new StreamHistory();
+        streamHistory.setMediaId(1);
+        List<StreamHistory> streamHistoryList = new ArrayList<>(List.of(streamHistory));
+        mediaUser.setStreamHistory(streamHistoryList);
+        MediaVO mediaVO = new MediaVO();
+        MediaWithStreamCountVO mediaWithStreamCountVO = new MediaWithStreamCountVO(mediaVO, 1);
+        List<MediaWithStreamCountVO> mediaList = new ArrayList<>(List.of(mediaWithStreamCountVO));
+
+        when(mediaUserRepositoryMock.findById(userId)).thenReturn(Optional.of(mediaUser));
+        when(restTemplateMock.getForObject(eq("http://MEDIAMICROSERVICE/media/media/" + streamHistoryList.get(0).getMediaId()), eq(MediaVO.class))).thenReturn(mediaVO);
+
+        List<MediaWithStreamCountVO> resultList =  mediaUserService.getTopPlayedMedia(userId, 5);
+
+        assertEquals(mediaList.getFirst().getMediaVO().getId(), resultList.getFirst().getMediaVO().getId());
+        verify(mediaUserRepositoryMock, times(1)).findById(userId);
+        verify(restTemplateMock, times(1)).getForObject(eq("http://MEDIAMICROSERVICE/media/media/" + streamHistoryList.get(0).getMediaId()), eq(MediaVO.class));
+    }
+
+    @Test
     void shouldThrowExceptionWhenMaxLimitExceeded() {
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> mediaUserService.getTopPlayedMedia(1, 100));
         assertEquals("Limit exceeds maximum allowed value of 20", exception.getMessage());
