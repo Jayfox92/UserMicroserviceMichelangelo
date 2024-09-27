@@ -10,8 +10,11 @@ import com.michelangelo.usermicroservice.repositories.MediaUserRepository;
 import com.michelangelo.usermicroservice.repositories.StreamHistoryRepository;
 import com.michelangelo.usermicroservice.repositories.ThumbsUpAndDownRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.server.ResponseStatusException;
 
 
 import java.util.*;
@@ -105,7 +108,13 @@ public class TopTenRecommendedMediaService implements TopTenRecommendedMediaServ
         List<GenreVO> genres = new ArrayList<>();
         boolean genreAdded;
         for (StreamHistory stream: streamHistories) {
-            MediaVO mediaVO = restTemplate.getForObject("http://MEDIAMICROSERVICE/media/media/" + stream.getMediaId(), MediaVO.class);
+            MediaVO mediaVO;
+            try{
+                mediaVO = restTemplate.getForObject("http://MEDIAMICROSERVICE/media/media/" + stream.getMediaId(), MediaVO.class);
+            }catch(RestClientException | IllegalStateException e){
+                throw new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE, "MediaMicroservice: " + e.getMessage(), e);
+            }
+
             if (mediaVO != null) {
                 for (GenreVO genreVO : mediaVO.getGenres()) {
                     genreAdded = false;
@@ -138,8 +147,14 @@ public class TopTenRecommendedMediaService implements TopTenRecommendedMediaServ
 
         List<MediaVO> unlistenedMedia = new ArrayList<>();
         for (Long genreId : genreIds) {
-            MediaVO[] mediaFromGenre = restTemplate.getForObject(
-                    "http://MEDIAMICROSERVICE/media/media/genre/" + genreId + "/" + mediaType, MediaVO[].class);
+            MediaVO[] mediaFromGenre;
+            try{
+                mediaFromGenre = restTemplate.getForObject(
+                        "http://MEDIAMICROSERVICE/media/media/genre/" + genreId + "/" + mediaType, MediaVO[].class);
+            }catch(RestClientException | IllegalStateException e){
+                throw new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE, "MediaMicroservice: " + e.getMessage(), e);
+            }
+
 
             if (mediaFromGenre != null) {
                 for (MediaVO media : mediaFromGenre) {
@@ -160,7 +175,12 @@ public class TopTenRecommendedMediaService implements TopTenRecommendedMediaServ
                 .toList();
 
         List<MediaVO> unlistenedMedia = new ArrayList<>();
-        GenreVO[] allGenres = restTemplate.getForObject("http://MEDIAMICROSERVICE/media/genre/getall", GenreVO[].class);
+        GenreVO[] allGenres;
+        try{
+            allGenres = restTemplate.getForObject("http://MEDIAMICROSERVICE/media/genre/getall", GenreVO[].class);
+        }catch(RestClientException | IllegalStateException e){
+            throw new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE, "MediaMicroservice: " + e.getMessage(), e);
+        }
 
         if (allGenres != null) {
             List<GenreVO> otherGenres = Arrays.stream(allGenres)
@@ -168,8 +188,14 @@ public class TopTenRecommendedMediaService implements TopTenRecommendedMediaServ
                     .toList();
 
             for (GenreVO genreVO : otherGenres) {
-                MediaVO[] mediaFromGenre = restTemplate.getForObject(
-                        "http://MEDIAMICROSERVICE/media/media/genre/" + genreVO.getId() + "/" + mediaType, MediaVO[].class);
+                MediaVO[] mediaFromGenre;
+                try{
+                    mediaFromGenre= restTemplate.getForObject(
+                            "http://MEDIAMICROSERVICE/media/media/genre/" + genreVO.getId() + "/" + mediaType, MediaVO[].class);
+                }catch(RestClientException | IllegalStateException e){
+                    throw new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE, "MediaMicroservice: " + e.getMessage(), e);
+                }
+
 
                 if (mediaFromGenre != null) {
                     for (MediaVO media : mediaFromGenre) {
@@ -193,8 +219,14 @@ public class TopTenRecommendedMediaService implements TopTenRecommendedMediaServ
 
     // Metod för att hitta media som användaren inte har lyssnat på baserat på genrer
     public List<MediaVO> getListOfAllMedia(String mediaType) {
-        MediaVO[] listOfAllMedia = restTemplate.getForObject(
-                "http://MEDIAMICROSERVICE/media/media/getallbymediatype/"+mediaType, MediaVO[].class);
+        MediaVO[] listOfAllMedia;
+        try{
+            listOfAllMedia = restTemplate.getForObject(
+                    "http://MEDIAMICROSERVICE/media/media/getallbymediatype/"+mediaType, MediaVO[].class);
+        }catch(RestClientException | IllegalStateException e){
+            throw new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE, "MediaMicroservice: " + e.getMessage(), e);
+        }
+
         return new ArrayList<MediaVO>(Arrays.asList(listOfAllMedia));
     }
         // Metod för att hitta media som användaren inte har lyssnat på baserat på genrer

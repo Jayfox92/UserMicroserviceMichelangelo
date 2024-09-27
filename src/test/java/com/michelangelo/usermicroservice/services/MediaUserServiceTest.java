@@ -8,7 +8,11 @@ import com.michelangelo.usermicroservice.exceptions.ResourceNotFoundException;
 import com.michelangelo.usermicroservice.repositories.MediaUserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpStatus;
+import org.springframework.test.util.ReflectionTestUtils;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.*;
 
@@ -31,6 +35,7 @@ class MediaUserServiceTest {
         mediaUser = new MediaUser();
         mediaUser.setId(userId);
         mediaUser.setUserName(userName);
+        ReflectionTestUtils.setField(mediaUserService,"maxLimit", 20);
     }
 
     // getMediaUser()
@@ -69,6 +74,13 @@ class MediaUserServiceTest {
 
     // Test för getTopPlayedMedia
     @Test
+    void shouldThrowExceptionWhenMaxLimitExceeded() {
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> mediaUserService.getTopPlayedMedia(1, 100));
+        assertEquals("Limit exceeds maximum allowed value of 20", exception.getMessage());
+        verify(mediaUserRepositoryMock, never()).findById(userId);
+    }
+
+    @Test
     void shouldThrowExceptionIfMediaUserDoesNotExist() {
         when(mediaUserRepositoryMock.existsById(userId)).thenReturn(false);
         assertThrowsExactly(ResourceNotFoundException.class, () -> mediaUserService.getTopPlayedMedia(userId, 5), "User not found with id : " + userId);
@@ -84,5 +96,21 @@ class MediaUserServiceTest {
         assertEquals(new ArrayList<MediaWithStreamCountVO>(), result);
     }
 
+    @Test
+    void shouldThrowExceptionWhenMediaMicroserviceFails() {
+        when(mediaUserRepositoryMock.findById(userId)).thenReturn(Optional.of(mediaUser));
+        StreamHistory streamHistory = new StreamHistory();
+        streamHistory.setMediaId(1);
+        List<StreamHistory> streamHistoryList = new ArrayList<>(List.of(streamHistory));
+        mediaUser.setStreamHistory(streamHistoryList);
+
+        doThrow(RestClientException.class).when(restTemplateMock).getForObject(eq("http://MEDIAMICROSERVICE/media/media/" + streamHistoryList.get(0).getMediaId()), eq(MediaVO.class));
+
+        ResponseStatusException result = assertThrows(ResponseStatusException.class, () -> mediaUserService.getTopPlayedMedia(userId, 5));
+
+        assertEquals(HttpStatus.SERVICE_UNAVAILABLE, result.getStatusCode());
+        verify(mediaUserRepositoryMock, times(1)).findById(userId);
+        verify(restTemplateMock, times(1)).getForObject(eq("http://MEDIAMICROSERVICE/media/media/" + streamHistoryList.get(0).getMediaId()), eq(MediaVO.class));
+    }
 
 }

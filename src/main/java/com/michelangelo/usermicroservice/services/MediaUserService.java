@@ -9,8 +9,11 @@ import com.michelangelo.usermicroservice.exceptions.ResourceNotFoundException;
 import com.michelangelo.usermicroservice.repositories.MediaUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -59,8 +62,13 @@ public class MediaUserService implements MediaUserServiceInterface {
 
         int finalLimit = Math.min(limit, maxLimit);
         for(int i=0; i < streamHistory.size() && i < finalLimit; i++){
-            MediaVO mediaVO = restTemplate.getForObject("http://MEDIAMICROSERVICE/media/media/" + streamHistory.get(i).getMediaId(), MediaVO.class);
-            resultList.add(new MediaWithStreamCountVO(mediaVO,streamHistory.get(i).getStreamHistoryCount()));
+            try{
+                MediaVO mediaVO = restTemplate.getForObject("http://MEDIAMICROSERVICE/media/media/" + streamHistory.get(i).getMediaId(), MediaVO.class);
+                resultList.add(new MediaWithStreamCountVO(mediaVO,streamHistory.get(i).getStreamHistoryCount()));
+            }catch (RestClientException | IllegalStateException e){
+                throw new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE, "MediaMicroservice: " + e.getMessage(), e);
+            }
+
         }
 
         return resultList;
