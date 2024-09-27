@@ -209,7 +209,7 @@ public class TopTenRecommendedMediaService implements TopTenRecommendedMediaServ
         return unlistenedMedia;
     }
 
-    private List<MediaVO> removeMediaWithThumbDown(MediaUser mediaUser, List<MediaVO> medias) {
+    public List<MediaVO> removeMediaWithThumbDown(MediaUser mediaUser, List<MediaVO> medias) {
         List<ThumbsUpAndDown> listOfMediaWithThumbDown = thumbsUpAndDownRepository.findAllByMediaUserAndThumbsDown(mediaUser, true);
         List<Long> listOfMediaIdWithThumbDown = listOfMediaWithThumbDown.stream().map(ThumbsUpAndDown::getMediaId).toList();
         return medias.stream()

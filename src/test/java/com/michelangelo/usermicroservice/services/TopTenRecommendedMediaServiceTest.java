@@ -2,7 +2,9 @@ package com.michelangelo.usermicroservice.services;
 
 import com.michelangelo.usermicroservice.VO.GenreVO;
 import com.michelangelo.usermicroservice.VO.MediaVO;
+import com.michelangelo.usermicroservice.entities.MediaUser;
 import com.michelangelo.usermicroservice.entities.StreamHistory;
+import com.michelangelo.usermicroservice.entities.ThumbsUpAndDown;
 import com.michelangelo.usermicroservice.repositories.MediaUserRepository;
 import com.michelangelo.usermicroservice.repositories.StreamHistoryRepository;
 import com.michelangelo.usermicroservice.repositories.ThumbsUpAndDownRepository;
@@ -14,6 +16,8 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -26,6 +30,7 @@ class TopTenRecommendedMediaServiceTest {
     RestTemplate restTemplate = mock(RestTemplate.class);
     ThumbsUpAndDownRepository thumbsUpAndDownRepository = mock(ThumbsUpAndDownRepository.class);
     List<MediaVO> medias;
+    private TopTenRecommendedMediaService topTenRecommendedMediaService = new TopTenRecommendedMediaService(mediaUserRepository,streamHistoryRepository,thumbsUpAndDownRepository,restTemplate);
     @BeforeEach
     void setUp() {
         medias = new ArrayList<>();
@@ -165,7 +170,130 @@ class TopTenRecommendedMediaServiceTest {
         assertEquals(HttpStatus.SERVICE_UNAVAILABLE, result.getStatusCode());
     }
 
+    @Test
+    void shouldReturnListOfMediaForGivenMediaType() {
+        String mediaType = "Video";
+        MediaVO[] mockMediaArray = new MediaVO[]{
+                new MediaVO(1L, "Film 1"),
+                new MediaVO(2L, "Film 2")
+        };
+        when(restTemplate.getForObject(eq("http://MEDIAMICROSERVICE/media/media/getallbymediatype/" + mediaType), eq(MediaVO[].class))).thenReturn(mockMediaArray);
 
+        List<MediaVO> result = topTenRecommendedMediaService.getListOfAllMedia(mediaType);
+
+        assertNotNull(result);
+        assertEquals(2, result.size());
+        assertEquals("Film 1", result.get(0).getTitle());
+        assertEquals("Film 2", result.get(1).getTitle());
+
+        verify(restTemplate, times(1))
+                .getForObject(eq("http://MEDIAMICROSERVICE/media/media/getallbymediatype/" + mediaType),
+                        eq(MediaVO[].class));
+    }
+
+    @Test
+    void shouldReturnTopThreeMostPlayedGenresFromMediaHistory() {
+        List<StreamHistory> streamHistories = Arrays.asList(
+                new StreamHistory(1L, 1, 5), // mediaId 1, streamHistoryCount 5
+                new StreamHistory(2L, 2, 3), // mediaId 2, streamHistoryCount 3
+                new StreamHistory(3L, 3, 2)  // mediaId 3, streamHistoryCount 2
+        );
+
+        MediaVO media1 = new MediaVO(1L, "Media 1", Arrays.asList(new GenreVO(1L, "Genre1", 0), new GenreVO(2L, "Genre2", 0)));
+        MediaVO media2 = new MediaVO(2L, "Media 2", Arrays.asList(new GenreVO(1L, "Genre1", 0), new GenreVO(3L, "Genre3", 0)));
+        MediaVO media3 = new MediaVO(3L, "Media 3", Arrays.asList(new GenreVO(2L, "Genre2", 0)));
+
+        when(restTemplate.getForObject(eq("http://MEDIAMICROSERVICE/media/media/1"), eq(MediaVO.class))).thenReturn(media1);
+        when(restTemplate.getForObject(eq("http://MEDIAMICROSERVICE/media/media/2"), eq(MediaVO.class))).thenReturn(media2);
+        when(restTemplate.getForObject(eq("http://MEDIAMICROSERVICE/media/media/3"), eq(MediaVO.class))).thenReturn(media3);
+
+        List<Long> result = topTenRecommendedMediaService.getTopThreeMostPlayedGenresFromMediaHistory(streamHistories);
+
+        assertEquals(3, result.size());
+        assertEquals(1L, result.get(0));
+        assertEquals(2L, result.get(1));
+        assertEquals(3L, result.get(2));
+
+        verify(restTemplate, times(3)).getForObject(anyString(), eq(MediaVO.class));
+    }
+
+    @Test
+    void shouldReturnEmptyListIfStreamHistoryIsEmpty() {
+        List<StreamHistory> streamHistories = new ArrayList<>();
+
+        List<Long> result = topTenRecommendedMediaService.getTopThreeMostPlayedGenresFromMediaHistory(streamHistories);
+
+        assertEquals(0, result.size());
+
+        verify(restTemplate, never()).getForObject(anyString(), eq(MediaVO.class));
+    }
+
+    @Test
+    void shouldRemoveMediaWithThumbsDown() {
+        MediaUser mediaUser = new MediaUser(1L, "testuser");  // Example MediaUser
+        List<MediaVO> mediaList = Arrays.asList(
+                new MediaVO(1L, "Media1"),
+                new MediaVO(2L, "Media2"),
+                new MediaVO(3L, "Media3")
+        );
+
+        List<ThumbsUpAndDown> thumbsDownList = Arrays.asList(
+                new ThumbsUpAndDown(1L, mediaUser, 1L, false, true),  // Thumbs down for mediaId 1
+                new ThumbsUpAndDown(2L, mediaUser, 3L, false, true)   // Thumbs down for mediaId 3
+        );
+        when(thumbsUpAndDownRepository.findAllByMediaUserAndThumbsDown(mediaUser, true)).thenReturn(thumbsDownList);
+
+        List<MediaVO> result = topTenRecommendedMediaService.removeMediaWithThumbDown(mediaUser, mediaList);
+
+        assertEquals(1, result.size());  // Only media with ID 2 should remain
+        assertEquals(2L, result.get(0).getId());
+
+        verify(thumbsUpAndDownRepository, times(1)).findAllByMediaUserAndThumbsDown(mediaUser, true);
+    }
+
+    @Test
+    void shouldReturnAllMediaIfNoThumbsDown() {
+        MediaUser mediaUser = new MediaUser(1L, "testuser");
+        List<MediaVO> mediaList = Arrays.asList(
+                new MediaVO(1L, "Media1"),
+                new MediaVO(2L, "Media2"),
+                new MediaVO(3L, "Media3")
+        );
+
+        when(thumbsUpAndDownRepository.findAllByMediaUserAndThumbsDown(mediaUser, true)).thenReturn(Collections.emptyList());
+
+        List<MediaVO> result = topTenRecommendedMediaService.removeMediaWithThumbDown(mediaUser, mediaList);
+
+        assertEquals(3, result.size());  // All media should remain
+        assertEquals(1L, result.get(0).getId());
+        assertEquals(2L, result.get(1).getId());
+        assertEquals(3L, result.get(2).getId());
+
+        verify(thumbsUpAndDownRepository, times(1)).findAllByMediaUserAndThumbsDown(mediaUser, true);
+    }
+
+    @Test
+    void shouldReturnEmptyListIfAllMediaHasThumbsDown() {
+        MediaUser mediaUser = new MediaUser(1L, "testuser");
+        List<MediaVO> mediaList = Arrays.asList(
+                new MediaVO(1L, "Media1"),
+                new MediaVO(2L, "Media2"),
+                new MediaVO(3L, "Media3")
+        );
+
+        List<ThumbsUpAndDown> thumbsDownList = Arrays.asList(
+                new ThumbsUpAndDown(1L, mediaUser, 1L, false, true),
+                new ThumbsUpAndDown(2L, mediaUser, 2L, false, true),
+                new ThumbsUpAndDown(3L, mediaUser, 3L, false, true)
+        );
+        when(thumbsUpAndDownRepository.findAllByMediaUserAndThumbsDown(mediaUser, true)).thenReturn(thumbsDownList);
+
+        List<MediaVO> result = topTenRecommendedMediaService.removeMediaWithThumbDown(mediaUser, mediaList);
+
+        assertEquals(0, result.size());  // No media should remain since all have thumbs down
+
+        verify(thumbsUpAndDownRepository, times(1)).findAllByMediaUserAndThumbsDown(mediaUser, true);
+    }
 
 
 

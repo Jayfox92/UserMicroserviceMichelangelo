@@ -22,6 +22,10 @@ public class MediaUser {
     @JsonIgnoreProperties(value = "mediaUser")
     private List<ThumbsUpAndDown> thumbsUpAndDown;
 
+    public MediaUser(long id, String userName){
+        this.id = id;
+        this.userName = userName;
+    }
     public MediaUser(){}
 
     public long getId() {

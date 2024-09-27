@@ -29,6 +29,14 @@ public class ThumbsUpAndDown {
 
     private MediaUser mediaUser;
     public ThumbsUpAndDown(){}
+    public ThumbsUpAndDown(long id, MediaUser mediaUser, long mediaId, boolean thumbsUp, boolean thumbsDown){
+        this.id = id;
+        this.mediaUser = mediaUser;
+        this.mediaId = mediaId;
+        this.thumbsUp = thumbsUp;
+        this.thumbsDown = thumbsDown;
+    }
+
 
     public long getId() {
         return id;

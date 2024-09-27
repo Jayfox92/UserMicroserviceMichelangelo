@@ -31,6 +31,11 @@ public class MediaVO {
         this.id = id;
         this.title = title;
     }
+    public MediaVO(Long id, String title, List<GenreVO> genres){
+        this.id = id;
+        this.title = title;
+        this.genres = genres;
+    }
 
 
     public List<GenreVO> getGenres() {
