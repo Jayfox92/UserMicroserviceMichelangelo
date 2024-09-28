@@ -12,10 +12,12 @@ public class StreamHistory {
     private long mediaId;
     @Column
     private int streamHistoryCount;
+
     @ManyToOne
     @JoinColumn(name = "media_user_id")
     @JsonIgnoreProperties(value = "streamHistory")
     private MediaUser mediaUser;
+
 
     public StreamHistory(){}
 

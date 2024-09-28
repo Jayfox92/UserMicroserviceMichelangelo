@@ -57,7 +57,6 @@ class ThumbsUpAndDownRepositoryTest {
         assertFalse(returnedList.isEmpty());
         assertEquals(2, returnedList.size());
         assertEquals(thumbsUpAndDownOne, returnedList.get(0));
-
     }
 
     @Test
