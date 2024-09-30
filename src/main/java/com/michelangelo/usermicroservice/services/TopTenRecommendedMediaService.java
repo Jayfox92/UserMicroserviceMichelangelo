@@ -88,8 +88,6 @@ public class TopTenRecommendedMediaService implements TopTenRecommendedMediaServ
         }
 
         if(numberOfMediasToFind > 0){
-//            List<MediaVO> allMedia = this.getAllMedia();
-            // Get all medias JOHANN, DET ÄR DETTA ENDPOINT SOM FATTAS!!
             List<MediaVO> listOfMedia = getListOfAllMedia(mediaType);
             // Remove all media with thummbs down
             listOfMedia = removeMediaWithThumbDown(mediaUser, listOfMedia);
@@ -103,7 +101,6 @@ public class TopTenRecommendedMediaService implements TopTenRecommendedMediaServ
 
     }
 
-    //private List<GenreVO> getTopThreeMostPlayedGenresFromMediaHistory(List<StreamHistory> streamHistories){
     public List<Long> getTopThreeMostPlayedGenresFromMediaHistory(List<StreamHistory> streamHistories){
         List<GenreVO> genres = new ArrayList<>();
         boolean genreAdded;

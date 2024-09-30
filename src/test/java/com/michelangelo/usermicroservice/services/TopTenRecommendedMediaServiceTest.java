@@ -49,45 +49,6 @@ class TopTenRecommendedMediaServiceTest {
         when(restTemplate.getForObject("http://MEDIAMICROSERVICE/media/3", MediaVO.class)).thenReturn(medias.get(2));
     }
 
-    @Test
-    void getTopThreeMostPlayedGenresFromMediaHistoryShouldReturnEmptyListWhenGivenEmptyList() {
-/*
-        TopTenRecommendedMediaService topTenRecommendedMediaService = new TopTenRecommendedMediaService(mediaUserRepository, streamHistoryRepository, restTemplate);
-        List<StreamHistory> streamHistories = new ArrayList<>();
-        assertTrue(topTenRecommendedMediaService.getTopThreeMostPlayedGenresFromMediaHistory(streamHistories).isEmpty());
-*/
-    }
-
-    @Test
-    void getTopThreeMostPlayedGenresFromMediaHistoryShouldReturnListWithThreeItemsInSequenceRockPopJazz() {
-/*
-        TopTenRecommendedMediaService topTenRecommendedMediaService = new TopTenRecommendedMediaService(mediaUserRepository, streamHistoryRepository, restTemplate);
-        List<StreamHistory> streamHistories = new ArrayList<>();
-        StreamHistory streamHistory = new StreamHistory();
-        streamHistory.setId(1);
-        streamHistory.setMediaId(1);
-        streamHistory.setStreamHistoryCount(1);
-        streamHistory.setMediaUser(null);
-        streamHistories.add(streamHistory);
-        streamHistory = new StreamHistory();
-        streamHistory.setId(2);
-        streamHistory.setMediaId(2);
-        streamHistory.setStreamHistoryCount(1);
-        streamHistory.setMediaUser(null);
-        streamHistories.add(streamHistory);
-        streamHistory = new StreamHistory();
-        streamHistory.setId(3);
-        streamHistory.setMediaId(3);
-        streamHistory.setStreamHistoryCount(1);
-        streamHistory.setMediaUser(null);
-        streamHistories.add(streamHistory);
-        List<GenreVO> result = topTenRecommendedMediaService.getTopThreeMostPlayedGenresFromMediaHistory(streamHistories);
-        assertThat(result.get(0).getName()).isEqualTo("Rock");
-        assertThat(result.get(1).getName()).isEqualTo("Pop");
-        assertThat(result.get(2).getName()).isEqualTo("Jazz");
-*/
-    }
-
 
     // Catch delarna i metoderna
 
@@ -294,7 +255,56 @@ class TopTenRecommendedMediaServiceTest {
 
         verify(thumbsUpAndDownRepository, times(1)).findAllByMediaUserAndThumbsDown(mediaUser, true);
     }
+    @Test
+    void testReturnAllMediaWhenListSizeIsLessThanOrEqualToNumberOfMediaToFind() {
+        // Arrange
+        List<MediaVO> mediaList = new ArrayList<>();
+        mediaList.add(new MediaVO(1L, "Media1"));
+        mediaList.add(new MediaVO(2L, "Media2"));
 
+        // Act
+        List<MediaVO> result = topTenRecommendedMediaService.getRandomListOfMedia(mediaList, 2);
 
+        // Assert
+        assertEquals(2, result.size());
+        assertTrue(result.containsAll(mediaList));
+    }
 
+    @Test
+    void testReturnRandomSubsetOfMediaWhenNumberOfMediaToFindIsLessThanListSize() {
+        // Arrange
+        List<MediaVO> mediaList = new ArrayList<>();
+        mediaList.add(new MediaVO(1L, "Media1"));
+        mediaList.add(new MediaVO(2L, "Media2"));
+        mediaList.add(new MediaVO(3L, "Media3"));
+
+        // Act
+        List<MediaVO> result = topTenRecommendedMediaService.getRandomListOfMedia(mediaList, 2);
+
+        // Assert
+        assertEquals(2, result.size());
+        assertTrue(mediaList.containsAll(result));
+    }
+
+    @Test
+    void testReturnEmptyListWhenInputListIsNull() {
+        // Act
+        List<MediaVO> result = topTenRecommendedMediaService.getRandomListOfMedia(null, 2);
+
+        // Assert
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void testReturnEmptyListWhenInputListIsEmpty() {
+        // Arrange
+        List<MediaVO> mediaList = new ArrayList<>();
+
+        // Act
+        List<MediaVO> result = topTenRecommendedMediaService.getRandomListOfMedia(mediaList, 2);
+
+        // Assert
+        assertTrue(result.isEmpty());
+    }
 }
+
