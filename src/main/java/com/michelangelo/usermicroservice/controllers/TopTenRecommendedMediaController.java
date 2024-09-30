@@ -13,7 +13,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/user/topten")
 public class TopTenRecommendedMediaController {
-    TopTenRecommendedMediaServiceInterface topTenRecommendedMediaService;
+   private TopTenRecommendedMediaServiceInterface topTenRecommendedMediaService;
 
     @Autowired
     public TopTenRecommendedMediaController(TopTenRecommendedMediaServiceInterface topTenRecommendedMediaService) {

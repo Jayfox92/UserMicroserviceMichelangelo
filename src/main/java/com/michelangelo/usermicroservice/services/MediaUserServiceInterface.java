@@ -6,7 +6,7 @@ import com.michelangelo.usermicroservice.entities.MediaUser;
 import java.util.List;
 
 public interface MediaUserServiceInterface {
-    public MediaUser getMediaUser(long id);
-    public MediaUser getMediaUserByUserName(String userName);
-    public List<MediaWithStreamCountVO> getTopPlayedMedia(long userId, int limit);
+     MediaUser getMediaUser(long id);
+     MediaUser getMediaUserByUserName(String userName);
+     List<MediaWithStreamCountVO> getTopPlayedMedia(long userId, int limit);
 }
