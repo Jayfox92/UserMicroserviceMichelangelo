@@ -3,7 +3,6 @@ package com.michelangelo.usermicroservice.entities;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
-
 import java.util.List;
 
 @Entity
@@ -26,6 +25,7 @@ public class MediaUser {
         this.id = id;
         this.userName = userName;
     }
+
     public MediaUser(){}
 
     public long getId() {

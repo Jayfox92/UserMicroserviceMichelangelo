@@ -1,6 +1,5 @@
 package com.michelangelo.usermicroservice.services;
 
-import com.michelangelo.usermicroservice.VO.GenreVO;
 import com.michelangelo.usermicroservice.VO.MediaVO;
 import com.michelangelo.usermicroservice.VO.MediaWithStreamCountVO;
 import com.michelangelo.usermicroservice.entities.MediaUser;

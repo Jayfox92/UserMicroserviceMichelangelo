@@ -62,7 +62,6 @@ class StreamHistoryServiceTest {
         verify(mediaUserRepositoryMock, times(1)).save(mediaUser);
     }
 
-
     @Test
     void shouldThrowExceptionWhenMediaUserNotFound() {
         when(streamHistoryRepositoryMock.findByMediaUser_IdAndMediaId(userId, mediaId)).thenReturn(Optional.empty());

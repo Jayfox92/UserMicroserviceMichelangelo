@@ -1,6 +1,5 @@
 package com.michelangelo.usermicroservice.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
@@ -11,24 +10,24 @@ public class ThumbsUpAndDown {
     private long id;
     @Column
     private long mediaId;
+
+    /*
+     * up = false & down = false  -> Användaren har ej valt att gilla eller ogilla vald media
+     * up = true  & down = false  -> Användaren har valt att gilla vald media med tumme upp
+     * up = false & down = true   -> Användaren har valt att gilla vald media med tumme ner
+     */
     @Column
     private boolean thumbsUp;
-    //false innebär att användaren ej gjort ett val (tumme upp eller tumme ner på ett media)
-    //true innebär att användaren antingen valt att gilla (thumbsUp) eller ogilla (thumbsDown) ett media
-    //är båda false har användaren ej valt att gilla eller ogilla ett media
-    //todo båda nedan får ej vara true (anvädaren kan ej både gilla och ogilla samma media) kontroll för detta behöver implementeras
-    //todo när man ändrar nedan värden
     @Column
     private boolean thumbsDown;
 
-    // private double likeOrDislike = 0; // -1 equals dislike | 1 equals like
-    // private String like = "upp"; // ner
     @ManyToOne
     @JoinColumn(name = "media_user_id")
     @JsonIgnoreProperties({"thumbsUpAndDown", "streamHistory"})
-
     private MediaUser mediaUser;
+
     public ThumbsUpAndDown(){}
+
     public ThumbsUpAndDown(long id, MediaUser mediaUser, long mediaId, boolean thumbsUp, boolean thumbsDown){
         this.id = id;
         this.mediaUser = mediaUser;
@@ -36,7 +35,6 @@ public class ThumbsUpAndDown {
         this.thumbsUp = thumbsUp;
         this.thumbsDown = thumbsDown;
     }
-
 
     public long getId() {
         return id;

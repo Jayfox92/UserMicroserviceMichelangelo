@@ -1,14 +1,11 @@
 package com.michelangelo.usermicroservice.controllers;
 
-import com.michelangelo.usermicroservice.VO.MediaVO;
 import com.michelangelo.usermicroservice.VO.MediaWithStreamCountVO;
 import com.michelangelo.usermicroservice.entities.MediaUser;
-import com.michelangelo.usermicroservice.entities.StreamHistory;
 import com.michelangelo.usermicroservice.exceptions.CustomErrorResponse;
 import com.michelangelo.usermicroservice.services.MediaUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -17,8 +14,10 @@ import java.util.List;
 @RestController
 @RequestMapping("/user/mediauser")
 public class MediaUserController {
+
     @Autowired
     private MediaUserService mediaUserService;
+
 
     @GetMapping("/getuser/{id}")
     public MediaUser getMediaUser(@PathVariable("id") long id){
@@ -31,10 +30,10 @@ public class MediaUserController {
     }
 
     @GetMapping("/gettopplayedmedia/{userId}")
-    public ResponseEntity<List<MediaWithStreamCountVO>> getTopplayedMediaByUserId(@PathVariable long userId, @RequestParam(defaultValue = "5") int limit) {  // Standardvärde 5 om inget anges){
-
+    public ResponseEntity<List<MediaWithStreamCountVO>> getTopplayedMediaByUserId(@PathVariable long userId, @RequestParam(defaultValue = "5") int limit) {  // Standardvärde 5 om inget anges)
         return ResponseEntity.ok(mediaUserService.getTopPlayedMedia(userId, limit));
     }
+
     // Undantagshanterare för IllegalArgumentException
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<String> handleIllegalArgument(IllegalArgumentException ex) {
